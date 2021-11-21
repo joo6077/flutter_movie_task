@@ -20,6 +20,7 @@ class _HomeState extends State<Home> {
   final String baseUrl = 'https://api.themoviedb.org/3/movie';
   final String baseImageUrl = 'https://image.tmdb.org/t/p/original';
   final String nowPlaying = 'now_playing';
+  final String upComing = 'upcoming';
 
   @override
   void initState() {
@@ -80,6 +81,117 @@ class _HomeState extends State<Home> {
     );
   }
 
+  Widget basicListItemWidget(dynamic data, double screenWidth) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16),
+      child: Row(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8.0),
+            child: Image.network(
+              '$baseImageUrl/${data['backdrop_path']}',
+              width: 45,
+              height: 69,
+              fit: BoxFit.fitHeight,
+            ),
+          ),
+          const SizedBox(
+            width: 16,
+          ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                data['original_title'],
+                style: const TextStyle(fontSize: 12),
+              ),
+              const SizedBox(
+                height: 4,
+              ),
+              voteAverageToStars(data['vote_average'].toDouble()),
+              const SizedBox(
+                height: 16,
+              ),
+              SizedBox(
+                width: screenWidth - 48 - 45,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      computedGenreList(data['genre_ids']),
+                      style: const TextStyle(
+                          fontSize: 9, color: Color(0xFF9A9A9A)),
+                    ),
+                    Text(
+                      data['release_date'],
+                      style: const TextStyle(
+                          fontSize: 9, color: Color(0xFF9A9A9A)),
+                    ),
+                  ],
+                ),
+              )
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
+  String computedGenreList(List genreList) {
+    String result = '';
+    genreList.asMap().forEach((index, element) {
+      result = result +
+          genreIdToName(element) +
+          ((index == genreList.length - 1) ? '' : ', ');
+    });
+    return result;
+  }
+
+  String genreIdToName(int id) {
+    switch (id) {
+      case 28:
+        return 'Action';
+      case 12:
+        return 'Adventure';
+      case 16:
+        return 'Animation';
+      case 35:
+        return 'Comedy';
+      case 80:
+        return 'Crime';
+      case 99:
+        return 'Documentary';
+      case 18:
+        return 'Drama';
+      case 10751:
+        return 'Family';
+      case 14:
+        return 'Fantasy';
+      case 36:
+        return 'History';
+      case 27:
+        return 'Horror';
+      case 10402:
+        return 'Music';
+      case 9648:
+        return 'Mystery';
+      case 10749:
+        return 'Romance';
+      case 878:
+        return 'Science Fiction';
+      case 10770:
+        return 'TV Movie';
+      case 53:
+        return 'Thriller';
+      case 10752:
+        return 'War';
+      case 37:
+        return 'Western';
+      default:
+        return '';
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
@@ -87,20 +199,22 @@ class _HomeState extends State<Home> {
     return Scaffold(
       body: SafeArea(
         child: ListView(
-          padding: const EdgeInsets.only(left: 16),
           children: [
-            const Text(
-              '현재 상영중',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            const Padding(
+              padding: EdgeInsets.only(left: 16),
+              child: Text(
+                '현재 상영중',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(
               height: 16,
             ),
             SizedBox(
-              width: _screenWidth - 16,
+              width: _screenWidth,
               height: 196,
               child: FutureBuilder<dynamic>(
                   future: fetch(nowPlaying),
@@ -113,7 +227,8 @@ class _HomeState extends State<Home> {
                             itemCount: snapshot.data.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Padding(
-                                padding: const EdgeInsets.only(right: 17),
+                                padding: EdgeInsets.only(
+                                    right: 17, left: index == 0 ? 16 : 0),
                                 child: nowPlayingWidget(snapshot.data[index]),
                               );
                             },
@@ -122,90 +237,29 @@ class _HomeState extends State<Home> {
                   }),
             ),
             const SizedBox(height: 40),
-            const Text(
-              '개봉 예정',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            const Padding(
+              padding: EdgeInsets.only(left: 16),
+              child: Text(
+                '개봉 예정',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 16),
-            Row(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8.0),
-                  child: Image.asset(
-                    '222397.jpg',
-                    width: 45,
-                    height: 69,
-                    fit: BoxFit.fill,
-                  ),
-                ),
-                const SizedBox(
-                  width: 16,
-                ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Moonlight Movie',
-                      style: TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(
-                      height: 4,
-                    ),
-                    Row(
-                      children: [
-                        SvgPicture.asset('assets/svgs/Star.svg'),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        SvgPicture.asset('assets/svgs/Star.svg'),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        SvgPicture.asset('assets/svgs/Star.svg'),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        SvgPicture.asset(
-                          'assets/svgs/Star.svg',
-                          color: const Color(0xFFC4C4C4),
-                        ),
-                        const SizedBox(
-                          width: 5,
-                        ),
-                        SvgPicture.asset(
-                          'assets/svgs/Star.svg',
-                          color: const Color(0xFFC4C4C4),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    SizedBox(
-                      width: _screenWidth - 48 - 45,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            'Action, Drama',
-                            style: TextStyle(
-                                fontSize: 9, color: Color(0xFF9A9A9A)),
-                          ),
-                          Text(
-                            '2016-08-03',
-                            style: TextStyle(
-                                fontSize: 9, color: Color(0xFF9A9A9A)),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
-                )
-              ],
-            )
+            FutureBuilder<dynamic>(
+                future: fetch(upComing),
+                builder:
+                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                  return snapshot.hasData
+                      ? Column(
+                          children: [
+                            basicListItemWidget(snapshot.data[0], _screenWidth),
+                          ],
+                        )
+                      : Container();
+                })
           ],
         ),
       ),
