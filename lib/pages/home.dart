@@ -20,7 +20,11 @@ class _HomeState extends State<Home> {
   final String baseUrl = 'https://api.themoviedb.org/3/movie';
   final String baseImageUrl = 'https://image.tmdb.org/t/p/original';
   final String nowPlaying = 'now_playing';
-  final String upComing = 'upcoming';
+  final List<Map<String, String>> urlTitleList = [
+    {'url': 'upcoming', 'title': '개봉 예정'},
+    {'url': 'popular', 'title': '인기'},
+    {'url': 'top_rated', 'title': '높은 평점'},
+  ];
 
   @override
   void initState() {
@@ -192,6 +196,46 @@ class _HomeState extends State<Home> {
     }
   }
 
+  Widget listForm(
+      {required Map<String, String> titleWithURL, required double width}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 24),
+        Padding(
+          padding: const EdgeInsets.only(left: 16),
+          child: Text(
+            titleWithURL['title']!,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ),
+        const SizedBox(height: 16),
+        FutureBuilder<dynamic>(
+            future: fetch(titleWithURL['url']!),
+            builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+              return snapshot.hasData
+                  ? Column(
+                      children: [
+                        basicListItemWidget(snapshot.data[0], width),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        basicListItemWidget(snapshot.data[1], width),
+                        const SizedBox(
+                          height: 8,
+                        ),
+                        basicListItemWidget(snapshot.data[2], width),
+                      ],
+                    )
+                  : Container();
+            })
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double _screenWidth = MediaQuery.of(context).size.width;
@@ -236,30 +280,9 @@ class _HomeState extends State<Home> {
                         : Container();
                   }),
             ),
-            const SizedBox(height: 40),
-            const Padding(
-              padding: EdgeInsets.only(left: 16),
-              child: Text(
-                '개봉 예정',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
             const SizedBox(height: 16),
-            FutureBuilder<dynamic>(
-                future: fetch(upComing),
-                builder:
-                    (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          children: [
-                            basicListItemWidget(snapshot.data[0], _screenWidth),
-                          ],
-                        )
-                      : Container();
-                })
+            for (var urlTitle in urlTitleList)
+              listForm(titleWithURL: urlTitle, width: _screenWidth)
           ],
         ),
       ),
