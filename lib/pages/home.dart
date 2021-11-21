@@ -5,6 +5,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_movie_task/pages/detail.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
@@ -32,10 +33,9 @@ class _HomeState extends State<Home> {
   }
 
   fetch(String url) async {
-    var nowPlayingUrl = Uri.parse('$baseUrl/$url?api_key=$apiKey');
-    var response = await http.get(nowPlayingUrl);
+    var computedUrl = Uri.parse('$baseUrl/$url?api_key=$apiKey');
+    var response = await http.get(computedUrl);
     var decodeResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    inspect(decodeResponse['results'][0]);
     return decodeResponse['results'];
   }
 
@@ -219,20 +219,43 @@ class _HomeState extends State<Home> {
               return snapshot.hasData
                   ? Column(
                       children: [
-                        basicListItemWidget(snapshot.data[0], width),
+                        gotoDetailPage(
+                          child: basicListItemWidget(snapshot.data[0], width),
+                          id: snapshot.data[0]['id'],
+                        ),
                         const SizedBox(
                           height: 8,
                         ),
-                        basicListItemWidget(snapshot.data[1], width),
+                        gotoDetailPage(
+                          child: basicListItemWidget(snapshot.data[1], width),
+                          id: snapshot.data[1]['id'],
+                        ),
                         const SizedBox(
                           height: 8,
                         ),
-                        basicListItemWidget(snapshot.data[2], width),
+                        gotoDetailPage(
+                          child: basicListItemWidget(snapshot.data[2], width),
+                          id: snapshot.data[2]['id'],
+                        ),
                       ],
                     )
                   : Container();
             })
       ],
+    );
+  }
+
+  Widget gotoDetailPage({required int id, required Widget child}) {
+    return InkWell(
+      child: child,
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Detail(
+                      id: id,
+                    )));
+      },
     );
   }
 
