@@ -59,6 +59,21 @@ class _HomeState extends State<Home> {
                       const SizedBox(
                         height: 4,
                       ),
+                      Row(
+                        children: [
+                          SvgPicture.asset('assets/svgs/Star.svg'),
+                          SvgPicture.asset('assets/svgs/Star.svg'),
+                          SvgPicture.asset('assets/svgs/Star.svg'),
+                          SvgPicture.asset(
+                            'assets/svgs/Star.svg',
+                            color: const Color(0xFFC4C4C4),
+                          ),
+                          SvgPicture.asset(
+                            'assets/svgs/Star.svg',
+                            color: const Color(0xFFC4C4C4),
+                          ),
+                        ],
+                      )
                     ],
                   )
                 ],
