@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_movie_task/pages/detail.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -75,7 +76,7 @@ class _HomeState extends State<Home> {
           width: 104,
           child: Text(
             data['original_title'],
-            style: const TextStyle(fontSize: 12),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
             overflow: TextOverflow.ellipsis,
             textAlign: TextAlign.center,
           ),
@@ -110,7 +111,8 @@ class _HomeState extends State<Home> {
             children: [
               Text(
                 data['original_title'],
-                style: const TextStyle(fontSize: 12),
+                style:
+                    const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
               ),
               const SizedBox(
                 height: 4,
@@ -299,7 +301,10 @@ class _HomeState extends State<Home> {
                               return Padding(
                                 padding: EdgeInsets.only(
                                     right: 17, left: index == 0 ? 16 : 0),
-                                child: nowPlayingWidget(snapshot.data[index]),
+                                child: gotoDetailPage(
+                                    id: snapshot.data[index]['id'],
+                                    child:
+                                        nowPlayingWidget(snapshot.data[index])),
                               );
                             },
                           )

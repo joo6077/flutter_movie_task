@@ -399,15 +399,6 @@ class _DetailState extends State<Detail> {
                                     const SizedBox(
                                       height: 24,
                                     ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(left: 16.0),
-                                      child: Text(
-                                        '리뷰',
-                                        style: TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                    ),
                                     FutureBuilder<dynamic>(
                                         future: fetch(ApiType.reviews),
                                         builder: (BuildContext context,
@@ -415,22 +406,47 @@ class _DetailState extends State<Detail> {
                                           return snapshot.hasData
                                               ? snapshot.data['results'] != null
                                                   ? Column(
-                                                      children: List.generate(
-                                                          snapshot
-                                                              .data['results']
-                                                              .length, (index) {
-                                                        return Column(
-                                                          children: [
-                                                            const SizedBox(
-                                                                height: 16.0),
-                                                            reviewCard(
-                                                                snapshot.data[
-                                                                        'results']
-                                                                    [index],
-                                                                _screenWidth),
-                                                          ],
-                                                        );
-                                                      }),
+                                                      children: [
+                                                        Column(
+                                                          children: List.generate(
+                                                              snapshot
+                                                                  .data[
+                                                                      'results']
+                                                                  .length,
+                                                              (index) {
+                                                            return Column(
+                                                              crossAxisAlignment:
+                                                                  CrossAxisAlignment
+                                                                      .start,
+                                                              children: [
+                                                                if (index == 0)
+                                                                  const Padding(
+                                                                    padding: EdgeInsets
+                                                                        .only(
+                                                                            left:
+                                                                                16.0),
+                                                                    child: Text(
+                                                                      '리뷰',
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              16.0,
+                                                                          fontWeight:
+                                                                              FontWeight.w700),
+                                                                    ),
+                                                                  ),
+                                                                const SizedBox(
+                                                                    height:
+                                                                        16.0),
+                                                                reviewCard(
+                                                                    snapshot.data[
+                                                                            'results']
+                                                                        [index],
+                                                                    _screenWidth),
+                                                              ],
+                                                            );
+                                                          }),
+                                                        ),
+                                                      ],
                                                     )
                                                   : Container()
                                               : Container();
