@@ -56,6 +56,8 @@ class _HomeState extends State<Home> {
 
   Widget nowPlayingWidget(dynamic data) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ClipRRect(
           borderRadius: BorderRadius.circular(8.0),
@@ -75,6 +77,7 @@ class _HomeState extends State<Home> {
             data['original_title'],
             style: const TextStyle(fontSize: 12),
             overflow: TextOverflow.ellipsis,
+            textAlign: TextAlign.center,
           ),
         ),
         const SizedBox(
@@ -282,7 +285,7 @@ class _HomeState extends State<Home> {
             ),
             SizedBox(
               width: _screenWidth,
-              height: 196,
+              height: 197,
               child: FutureBuilder<dynamic>(
                   future: fetch(nowPlaying),
                   builder:

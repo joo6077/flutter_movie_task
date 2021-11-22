@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
@@ -69,6 +71,39 @@ class _DetailState extends State<Detail> {
         ),
       );
     }));
+  }
+
+  Widget reviewCard(dynamic data, double width) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 16.0),
+      child: Container(
+          padding: const EdgeInsets.all(8.0),
+          width: width - 32,
+          height: 75,
+          decoration: BoxDecoration(
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.25),
+                blurRadius: 4.0,
+              ),
+            ],
+            borderRadius: BorderRadius.circular(8.0),
+            color: Colors.white,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Text(data['content'],
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 12)),
+              Text(
+                data['author'],
+                style: const TextStyle(fontSize: 12, color: Color(0xFFA1A1A1)),
+              )
+            ],
+          )),
+    );
   }
 
   String computedGenreList(List genreList) {
@@ -167,6 +202,7 @@ class _DetailState extends State<Detail> {
                                 transform:
                                     Matrix4.translationValues(0.0, -51.0, 0.0),
                                 child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Row(
                                       children: [
@@ -249,7 +285,156 @@ class _DetailState extends State<Detail> {
                                           ],
                                         )
                                       ],
-                                    )
+                                    ),
+                                    const SizedBox(
+                                      height: 24,
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 16.0),
+                                      child: Text(
+                                        '개요',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                      ),
+                                      child: Text(snapshot.data['overview']),
+                                    ),
+                                    const SizedBox(
+                                      height: 24,
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 16.0),
+                                      child: Text(
+                                        '주요 출연진',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      height: 16,
+                                    ),
+                                    SizedBox(
+                                      width: _screenWidth,
+                                      height: 54,
+                                      child: FutureBuilder<dynamic>(
+                                          future: fetch(ApiType.credits),
+                                          builder: (BuildContext context,
+                                              AsyncSnapshot<dynamic> snapshot) {
+                                            return snapshot.hasData
+                                                ? ListView.builder(
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    shrinkWrap: true,
+                                                    itemCount:
+                                                        snapshot.data.length,
+                                                    itemBuilder:
+                                                        (BuildContext context,
+                                                            int index) {
+                                                      return Padding(
+                                                        padding:
+                                                            EdgeInsets.only(
+                                                                right: 17,
+                                                                left: index == 0
+                                                                    ? 16
+                                                                    : 0),
+                                                        child: Column(
+                                                          children: [
+                                                            Container(
+                                                              width: 40,
+                                                              height: 40,
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                image:
+                                                                    DecorationImage(
+                                                                  image: NetworkImage(
+                                                                      '$baseImageUrl/${snapshot.data['cast'][index]['profile_path']}'),
+                                                                  fit: BoxFit
+                                                                      .fitWidth,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                              height: 2.0,
+                                                            ),
+                                                            SizedBox(
+                                                              width: 54,
+                                                              child: Text(
+                                                                  snapshot.data[
+                                                                              'cast']
+                                                                          [index]
+                                                                      [
+                                                                      'original_name'],
+                                                                  overflow:
+                                                                      TextOverflow
+                                                                          .ellipsis,
+                                                                  style: const TextStyle(
+                                                                      fontSize:
+                                                                          8,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400),
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center),
+                                                            )
+                                                          ],
+                                                        ),
+                                                      );
+                                                    },
+                                                  )
+                                                : Container();
+                                          }),
+                                    ),
+                                    const SizedBox(
+                                      height: 24,
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(left: 16.0),
+                                      child: Text(
+                                        '리뷰',
+                                        style: TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w700),
+                                      ),
+                                    ),
+                                    FutureBuilder<dynamic>(
+                                        future: fetch(ApiType.reviews),
+                                        builder: (BuildContext context,
+                                            AsyncSnapshot<dynamic> snapshot) {
+                                          return snapshot.hasData
+                                              ? snapshot.data['results'] != null
+                                                  ? Column(
+                                                      children: List.generate(
+                                                          snapshot
+                                                              .data['results']
+                                                              .length, (index) {
+                                                        return Column(
+                                                          children: [
+                                                            const SizedBox(
+                                                                height: 16.0),
+                                                            reviewCard(
+                                                                snapshot.data[
+                                                                        'results']
+                                                                    [index],
+                                                                _screenWidth),
+                                                          ],
+                                                        );
+                                                      }),
+                                                    )
+                                                  : Container()
+                                              : Container();
+                                        })
                                   ],
                                 ),
                               ),
