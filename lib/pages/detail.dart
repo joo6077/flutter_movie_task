@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_movie_task/config/config.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 
@@ -20,9 +21,9 @@ class Detail extends StatefulWidget {
 }
 
 class _DetailState extends State<Detail> {
-  final String apiKey = '04959d38722820bec95208db53060316';
-  final String baseUrl = 'https://api.themoviedb.org/3/movie';
-  final String baseImageUrl = 'https://image.tmdb.org/t/p/original';
+  final String apiKey = Config.apiKey;
+  final String baseUrl = Config.baseUrl;
+  final String baseImageUrl = Config.baseImageUrl;
 
   fetch(ApiType type) async {
     String computedUrl = '';
@@ -39,7 +40,6 @@ class _DetailState extends State<Detail> {
     var uri = Uri.parse(computedUrl);
     var response = await http.get(uri);
     var decodeResponse = jsonDecode(utf8.decode(response.bodyBytes)) as Map;
-    inspect(decodeResponse);
     return decodeResponse;
   }
 

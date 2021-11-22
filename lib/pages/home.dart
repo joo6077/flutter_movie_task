@@ -1,11 +1,10 @@
 // ignore_for_file: file_names
 
 import 'dart:convert';
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_movie_task/config/config.dart';
 import 'package:flutter_movie_task/pages/detail.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
@@ -18,9 +17,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final String apiKey = '04959d38722820bec95208db53060316';
-  final String baseUrl = 'https://api.themoviedb.org/3/movie';
-  final String baseImageUrl = 'https://image.tmdb.org/t/p/original';
+  final String apiKey = Config.apiKey;
+  final String baseUrl = Config.baseUrl;
+  final String baseImageUrl = Config.baseImageUrl;
   final String nowPlaying = 'now_playing';
   final List<Map<String, String>> urlTitleList = [
     {'url': 'upcoming', 'title': '개봉 예정'},
